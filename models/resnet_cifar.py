@@ -1,6 +1,6 @@
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## Created by: blacklancer
-## Modified from: https://github.com/yaoyao-liu/class-incremental-learning
+## Modified from: https://github.com/hshustc/CVPR19_Incremental_Learning
 ## Copyright (c) 2022
 ## This source code is licensed under the MIT-style license found in the
 ## LICENSE file in the root directory of this source tree
@@ -60,6 +60,7 @@ class ResNet(nn.Module):
         self.layer2 = self._make_layer(block, 32, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 64, layers[2], stride=2, last_phase=True)
         self.avgpool = nn.AvgPool2d(8, stride=1)
+        self.flatten = nn.Flatten()
         self.fc = modified_linear.CosineLinear(64 * block.expansion, num_classes)
 
         for m in self.modules():

@@ -1,11 +1,10 @@
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## Created by: blacklancer
-## Modified from: https://github.com/yaoyao-liu/class-incremental-learning
+## Modified from: https://github.com/hshustc/CVPR19_Incremental_Learning
 ## Copyright (c) 2022
 ## This source code is licensed under the MIT-style license found in the
 ## LICENSE file in the root directory of this source tree
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 import math
 import torch
 from torch.nn.parameter import Parameter
@@ -31,11 +30,12 @@ class CosineLinear(Module):
             self.sigma.data.fill_(1)
 
     def forward(self, input):
-        out = F.linear(F.normalize(input, p=2,dim=1), \
+        out = F.linear(F.normalize(input, p=2, dim=1), \
                 F.normalize(self.weight, p=2, dim=1))
         if self.sigma is not None:
             out = self.sigma * out
         return out
+
 
 class SplitCosineLinear(Module):
     def __init__(self, in_features, out_features1, out_features2, sigma=True):

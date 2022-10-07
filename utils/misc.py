@@ -1,11 +1,10 @@
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## Created by: blacklancer
-## Modified from: https://github.com/yaoyao-liu/class-incremental-learning
+## Modified from: https://github.com/hshustc/CVPR19_Incremental_Learning
 ## Copyright (c) 2022
 ## This source code is licensed under the MIT-style license found in the
 ## LICENSE file in the root directory of this source tree
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 
 from __future__ import print_function, division
 
@@ -28,19 +27,40 @@ try:
 except:
     import pickle
 
+
+def km(k, data):
+    data = data
+    k = k
+    # 训练模型
+    model = KMeans(n_clusters=k)
+    model.fit(data)
+    # 分类中心点坐标
+    centers = model.cluster_centers_
+    for i in range(len(centers)):
+        c = centers[i]
+        centers /= np.linalg.norm(c)
+
+    center = np.sum(centers, axis=0)/k
+    center /= np.linalg.norm(center)
+    return center
+
+
 def savepickle(data, file_path):
     mkdir_p(osp.dirname(file_path), delete=False)
     print('pickle into', file_path)
     with open(file_path, 'wb') as f:
         pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
+
 def unpickle(file_path):
     with open(file_path, 'rb') as f:
         data = pickle.load(f)
     return data
 
+
 def mkdir_p(path, delete=False, print_info=True):
-    if path == '': return
+    if path == '': 
+        return
 
     if delete:
         subprocess.call(('rm -r ' + path).split())
@@ -48,6 +68,7 @@ def mkdir_p(path, delete=False, print_info=True):
         if print_info:
             print('mkdir -p  ' + path)
         subprocess.call(('mkdir -p ' + path).split())
+
 
 def get_mean_and_std(dataset):
     '''Compute the mean and std value of dataset.'''
@@ -62,6 +83,7 @@ def get_mean_and_std(dataset):
     mean.div_(len(dataset))
     std.div_(len(dataset))
     return mean, std
+
 
 def init_params(net):
     '''Init layer parameters.'''
@@ -78,12 +100,14 @@ def init_params(net):
             if m.bias is not None:
                 init.constant_(m.bias, 0)
 
-def map_labels(order_list, Y_set):
-    map_Y = []
-    for idx in Y_set:
-        map_Y.append(order_list.index(idx))
-    map_Y = np.array(map_Y)
-    return map_Y
+
+# def map_labels(order_list, Y_set):
+#     map_Y = []
+#     for idx in Y_set:
+#         map_Y.append(order_list.index(idx))
+#     map_Y = np.array(map_Y)
+#     return map_Y
+
 
 def format_time(seconds):
     days = int(seconds / 3600/24)
@@ -117,6 +141,7 @@ def format_time(seconds):
         f = '0ms'
     return f
 
+
 def tensor2im(input_image, imtype=np.uint8):
     mean = [0.5071,  0.4866,  0.4409]
     std = [0.2009,  0.1984,  0.2023]
@@ -135,6 +160,7 @@ def tensor2im(input_image, imtype=np.uint8):
     else:
         image_numpy = input_image
     return image_numpy.astype(imtype)
+
 
 def process_mnemonics(X_protoset_cumuls, Y_protoset_cumuls, mnemonics, mnemonics_label, order_list):
     mnemonics_array_new = np.zeros(np.array(X_protoset_cumuls).shape)
